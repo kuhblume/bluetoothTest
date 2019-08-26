@@ -6,14 +6,17 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,7 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener
 {
     static public class BluetoothService
     {
@@ -245,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // GUIアイテム
     private Button mButton_Connect;    // 接続ボタン
     private Button mButton_Disconnect;    // 切断ボタン
-    private Button mButton_WriteHello;        // 「Hello」送信ボタン
-    private Button mButton_WriteWorld;        // 「World」送信ボタン
+//    private Button mButton_WriteHello;        // 「Hello」送信ボタン
+//    private Button mButton_WriteWorld;        // 「World」送信ボタン
 
     // Bluetoothサービスから情報を取得するハンドラ
     private final Handler mHandler = new Handler()
@@ -272,8 +275,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // GUIアイテムの有効無効の設定
                             // 切断ボタン、文字列送信ボタンを有効にする
                             mButton_Disconnect.setEnabled( true );
-                            mButton_WriteHello.setEnabled( true );
-                            mButton_WriteWorld.setEnabled( true );
+//                            mButton_WriteHello.setEnabled( true );
+//                            mButton_WriteWorld.setEnabled( true );
                             break;
                         case BluetoothService.STATE_CONNECTION_LOST:            // 接続ロスト
                             //Toast.makeText( MainActivity.this, "Lost connection to the device.", Toast.LENGTH_SHORT ).show();
@@ -282,8 +285,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // GUIアイテムの有効無効の設定
                             // 切断ボタン、文字列送信ボタンを無効にする
                             mButton_Disconnect.setEnabled( false );
-                            mButton_WriteHello.setEnabled( false );
-                            mButton_WriteWorld.setEnabled( false );
+//                            mButton_WriteHello.setEnabled( false );
+//                            mButton_WriteWorld.setEnabled( false );
                             break;
                         case BluetoothService.STATE_DISCONNECTED:            // 切断完了
                             // GUIアイテムの有効無効の設定
@@ -303,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {    // 終端
                             mReadBuffer[mReadBufferCounter] = '\0';
                             // GUIアイテムへの反映
-                            ( (TextView)findViewById( R.id.textview_read ) ).setText( new String( mReadBuffer, 0, mReadBufferCounter ) );
+//                            ( (TextView)findViewById( R.id.textview_read ) ).setText( new String( mReadBuffer, 0, mReadBufferCounter ) );
                             mReadBufferCounter = 0;
                         }
                         else if( '\n' == c )
@@ -328,8 +331,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case BluetoothService.MESSAGE_WRITTEN:
                     // GUIアイテムの有効無効の設定
                     // 文字列送信ボタンを有効にする（連打対策で無効になっているボタンを復帰させる）
-                    mButton_WriteHello.setEnabled( true );
-                    mButton_WriteWorld.setEnabled( true );
+//                    mButton_WriteHello.setEnabled( true );
+//                    mButton_WriteWorld.setEnabled( true );
                     break;
             }
         }
@@ -347,10 +350,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mButton_Connect.setOnClickListener( this );
         mButton_Disconnect = (Button)findViewById( R.id.button_disconnect );
         mButton_Disconnect.setOnClickListener( this );
-        mButton_WriteHello = (Button)findViewById( R.id.button_writehello );
-        mButton_WriteHello.setOnClickListener( this );
-        mButton_WriteWorld = (Button)findViewById( R.id.button_writeworld );
-        mButton_WriteWorld.setOnClickListener( this );
+//        mButton_WriteHello = (Button)findViewById( R.id.button_writehello );
+//        mButton_WriteHello.setOnClickListener( this );
+//        mButton_WriteWorld = (Button)findViewById( R.id.button_writeworld );
+//        mButton_WriteWorld.setOnClickListener( this );
+
+        //追加ボタン
+        mButton_forward = (Button)findViewById( R.id.button_forward );
+        mButton_forward.setOnTouchListener( this );
+        mButton_back = (Button)findViewById( R.id.button_back );
+        mButton_back.setOnTouchListener( this );
+        mButton_turnL = (Button)findViewById( R.id.button_turnL );
+        mButton_turnL.setOnTouchListener( this );
+        mButton_turnR = (Button)findViewById( R.id.button_turnR );
+        mButton_turnR.setOnTouchListener( this );
+
 
         // Bluetoothアダプタの取得
         BluetoothManager bluetoothManager = (BluetoothManager)getSystemService( Context.BLUETOOTH_SERVICE );
@@ -375,8 +389,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // GUIアイテムの有効無効の設定
         mButton_Connect.setEnabled( false );
         mButton_Disconnect.setEnabled( false );
-        mButton_WriteHello.setEnabled( false );
-        mButton_WriteWorld.setEnabled( false );
+//        mButton_WriteHello.setEnabled( false );
+//        mButton_WriteWorld.setEnabled( false );
 
         // デバイスアドレスが空でなければ、接続ボタンを有効にする。
         if( !mDeviceAddress.equals( "" ) )
@@ -452,7 +466,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 ( (TextView)findViewById( R.id.textview_devicename ) ).setText( strDeviceName );
                 ( (TextView)findViewById( R.id.textview_deviceaddress ) ).setText( mDeviceAddress );
-                ( (TextView)findViewById( R.id.textview_read ) ).setText( "" );
+//                ( (TextView)findViewById( R.id.textview_read ) ).setText( "" );
                 break;
         }
         super.onActivityResult( requestCode, resultCode, data );
@@ -496,20 +510,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             disconnect();            // 切断
             return;
         }
-        if( mButton_WriteHello.getId() == v.getId() )
-        {
-            mButton_WriteHello.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
-            mButton_WriteWorld.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
-            write( "Hello" );
-            return;
-        }
-        if( mButton_WriteWorld.getId() == v.getId() )
-        {
-            mButton_WriteHello.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
-            mButton_WriteWorld.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
-            write( "World" );
-            return;
-        }
+//        if( mButton_WriteHello.getId() == v.getId() )
+//        {
+//            mButton_WriteHello.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
+//            mButton_WriteWorld.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
+//            write( "0" );
+//            return;
+//        }
+//        if( mButton_WriteWorld.getId() == v.getId() )
+//        {
+//            mButton_WriteHello.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
+//            mButton_WriteWorld.setEnabled( false );    // 文字列送信ボタンの無効化（連打対策）
+//            write( "1" );
+//            return;
+//        }
     }
 
 
@@ -558,5 +572,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // バイト列送信
         mBluetoothService.write( stringSend.getBytes() );
+    }
+
+
+    ///以下追加処理
+
+    private Button mButton_forward;        // 前進送信ボタン
+    private Button mButton_back;        // 前進送信ボタン
+    private Button mButton_turnL;        // 前進送信ボタン
+    private Button mButton_turnR;        // 前進送信ボタン
+    //コード0は停止信号
+
+
+    //onTouchのイベント
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        //onTouchは、画面を押した時と、離した時の両方のイベントを取得する
+        if( mButton_forward.getId() == v.getId() )//押している間だけ1
+        {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    write("aaaa");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    write("0");
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    break;
+            }
+            return false;
+        }
+        if( mButton_back.getId() == v.getId() )
+        {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    write("1");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    write("0");
+                    break;
+            }
+            return false;
+        }
+        if( mButton_turnL.getId() == v.getId() )
+        {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    write("2");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    write("0");
+                    break;
+            }
+            return false;
+        }
+        if( mButton_turnR.getId() == v.getId() )
+        {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    write("100");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    write("0");
+                    break;
+            }
+            return false;
+        }
+        return false;
     }
 }

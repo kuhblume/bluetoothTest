@@ -15,8 +15,8 @@
     <string name="disconnect">Disconnect</string>
     <string name="read_string">Read string : </string>
     <string name="write_string">Wtite string : </string>
-    <string name="hello">Hello</string>
-    <string name="world">World</string>
+    <string name="hello">0</string>
+    <string name="world">1</string>
 
     <!-- DeviceListActivity トースト用 -->
     <string name="unknown_device">Unknown device</string>
