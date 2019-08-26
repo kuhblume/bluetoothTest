@@ -8,6 +8,10 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -25,9 +29,10 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, SensorEventListener
 {
     static public class BluetoothService
     {
@@ -345,6 +350,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
+        // Get an instance of the SensorManager
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        textView = findViewById(R.id.text_view);
+
         // GUIアイテム
         mButton_Connect = (Button)findViewById( R.id.button_connect );
         mButton_Connect.setOnClickListener( this );
@@ -383,6 +392,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onResume();
 
+        // Listenerの登録
+        Sensor accel = sensorManager.getDefaultSensor(
+                Sensor.TYPE_ACCELEROMETER);
+
+        sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
+
         // Android端末のBluetooth機能の有効化要求
         requestBluetoothFeature();
 
@@ -410,6 +425,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 切断
         disconnect();
+
+
+        // Listenerを解除
+        sensorManager.unregisterListener(this);
     }
 
     // アクティビティの終了直前
@@ -581,6 +600,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButton_back;        // 前進送信ボタン
     private Button mButton_turnL;        // 前進送信ボタン
     private Button mButton_turnR;        // 前進送信ボタン
+
+    private SensorManager sensorManager;
+    private TextView textView;
+
     //コード0は停止信号
 
 
@@ -641,5 +664,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
         return false;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float sensorX, sensorY, sensorZ;
+
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            sensorX = event.values[0];
+            sensorY = event.values[1];
+            sensorZ = event.values[2];
+            String strTmp = String.format(Locale.US, "Gyroscope\n " +
+                    " X: %f\n Y: %f\n Z: %f",sensorX, sensorY, sensorZ);
+            textView.setText(strTmp);
+        }
+    }
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+
+
+    private void sendGyro(){
+
     }
 }
